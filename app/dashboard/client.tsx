@@ -8,9 +8,13 @@ import componentsStore from '@/lib/store'
 import { invokeToolsIncludedProvider } from '@/lib/query/actions'
 import {
   IconArrowRight,
+  IconCopy,
   IconDatabase,
+  IconExternalLink,
   IconMicrophone
 } from '@/components/ui/icons'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 let config = {}
 
@@ -18,7 +22,12 @@ const ProtectedClient = () => {
   const [query, setQuery] = useState(
     'Create a homepage for my indie plant shop that highlights the incredible variety of plants I offer, brags about my top-notch customer service, and shows off those 100+ happy customers.'
   )
-  const [components, setComponents] = useState<any>([])
+  const [components, setComponents] = useState<any>([
+    componentsStore.BANNER,
+    componentsStore.HERO_WITH_IMAGE_AND_REVIEW,
+    componentsStore.PRIMARY_PRODUCT_FEATURE,
+    componentsStore.FOOTER
+  ])
   const [loading, startTransition] = useTransition()
 
   const initializeComponents = async () => {
@@ -112,11 +121,13 @@ const ProtectedClient = () => {
           </div>
         </div>
 
-        {/* ----------------------- ✨ GENERATED_WEBSITE -----------------------*/}
+        {/* ----------------------- ✨ GENERATED_WEBSITE ----------------------- */}
 
         {components.length > 0 && (
           <div className="p-8 flex flex-col h-screen mt-24 z-10">
-            <div className="p-2 pl-4 bg-slate-200 rounded-t-md flex items-center">
+            {/* ----------------------- 📦 MINI_BROSWER_WINDOW ----------------------- */}
+            {/* <div className="overflow-y-scroll relative"> */}
+            <div className="p-2 pl-4 bg-slate-200 rounded-t-md flex items-center sticky">
               <div className="rounded-full size-4 bg-red-400 flex mr-2"></div>
               <div className="rounded-full size-4 bg-yellow-400 flex mr-2"></div>
               <div className="rounded-full size-4 bg-green-400 flex mr-2"></div>
@@ -124,16 +135,56 @@ const ProtectedClient = () => {
                 https://atharane.vercel.app
               </div>
             </div>
-            <div className="border grow text-clip overflow-y-scroll shadow-2xl  rounded-b-lg bg-white">
-              <div className="px-2 py-4 bg-white h-max rounded-b-xl">
+            <div className="grow text-clip overflow-y-scroll border-4 border-slate-200 rounded-b-lg bg-white">
+              <div id="generation">
                 {[...components].map(component => {
                   return (
                     <ComponentEditable id={component.id} key={component.id}>
+                      {/* @ts-ignore */}
                       <component.component {...config?.[component.id]} />
                     </ComponentEditable>
                   )
                 })}
               </div>
+            </div>
+            {/* </div> */}
+            {/* ----------------------- 🦄 FAB_STRIP ----------------------- */}
+            <div className="flex gap-2 p-2 mt-2 rounded-lg border-4 border-slate-200 bg-transparent">
+              <Button
+                onClick={() => {
+                  const generatedWebpage = document.getElementById('generation')
+                    ?.innerHTML as string
+                  const blob = new Blob([generatedWebpage], {
+                    type: 'text/html'
+                  })
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = 'index.html'
+                  a.click()
+                  URL.revokeObjectURL(url)
+                  toast.success('Copied to clipboard')
+                }}
+                size="lg"
+                className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+              >
+                <IconCopy className="mr-2" />
+                Download Code
+              </Button>
+              <Button
+                size="lg"
+                className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+              >
+                <IconExternalLink className="mr-2" />
+                {/* todo: implement deploy functionality */}
+                Get Sharable Link
+              </Button>
+              <Button
+                size="lg"
+                className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+              >
+                lorem ispum dolor sit
+              </Button>
             </div>
           </div>
         )}

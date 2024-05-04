@@ -75,12 +75,12 @@ const ComponentEditable = ({
   return (
     <div
       contentEditable={isEditing ? 'true' : 'inherit'}
-      className="relative group hover:outline hover:outline-offset-2 hover:outline-rose-500"
+      className="relative group hover:z-10 hover:outline-dashed outline-2  outline-offset-2 outline-rose-400"
     >
       <div className="">{children}</div>
 
       {isEditing ? (
-        <div className="z-10 invisible group-hover:visible absolute left-1/2 -bottom-10  -translate-x-1/2 -translate-y-1/2">
+        <div className="save-btn z-10 invisible group-hover:visible absolute left-1/2 -bottom-10  -translate-x-1/2 -translate-y-1/2">
           <Button
             className=" text-white font-bold rounded-lg  bg-emerald-400"
             onClick={() => {
@@ -92,7 +92,7 @@ const ComponentEditable = ({
         </div>
       ) : (
         // ------------------------------------ 🔨 FAB strip ------------------------------------
-        <div className="invisible group-hover:visible absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="fab-strip invisible group-hover:visible absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="z-10 flex min-h-12 w-full items-center justify-center gap-2 rounded-3xl bg-gray-900/80 px-2 shadow-lg  sm:shadow-black/40 max-w-[510px]">
             <div className="items-center justify-center rounded-l-full sm:flex">
               {/*  eslint-disable-next-line @next/next/no-img-element */}
