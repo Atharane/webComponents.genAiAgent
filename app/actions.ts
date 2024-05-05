@@ -6,6 +6,8 @@ import { kv } from '@vercel/kv'
 
 import { auth } from '@/auth'
 import { type Chat } from '@/lib/types'
+import { OpenAI } from '@langchain/openai'
+
 
 export async function getChats(userId?: string | null) {
   if (!userId) {
