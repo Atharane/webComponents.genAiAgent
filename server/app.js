@@ -1,10 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import userRoutes from "./routes/userRoutes.js"
 dotenv.config({});
 
 const app = express();
-// app.use(express.json({ limit: "50mb" }));
+app.use(express.json());
 
 
 // app.use(
@@ -23,6 +24,7 @@ const app = express();
 //     credentials: true,
 //   })
 // );
+
 app.use((req, res, next) => {
   // res.header("Access-Control-Allow-Origin", "https://www.turfcreed.com");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -37,7 +39,7 @@ app.use((req, res, next) => {
 // app.set("trust proxy", 1);
 
 // // setting up routes
-// app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1", userRoutes);
 // app.use("/api/v1/turf", turfRoutes);
 // app.use("/api/v1/creeds", creedRoutes);
 
