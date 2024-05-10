@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { customAlphabet } from 'nanoid'
 
 let config = {}
 
@@ -56,6 +57,43 @@ const ProtectedClient = () => {
       }
       setComponents(nComponents)
     })
+  }
+
+  const addWebsite = async () =>{
+    try {
+      const generatedWebpage = document.getElementById('generation')?.innerHTML as string
+
+      if(generatedWebpage!==null)
+      {
+          let a  = customAlphabet(
+            '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+            7
+          ); 
+
+          const linkKey = a();
+
+          const data = {
+            "linkKey": linkKey,
+            "username":"Hem",
+            "DOMString":generatedWebpage
+          };
+
+          console.log("Adding data ", data);
+
+          const res =  fetch('http://localhost:5000/api/v1/addWebsite', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          console.log("data aded successfully");
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -174,6 +212,7 @@ const ProtectedClient = () => {
               <Button
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+                onClick={()=>addWebsite()}
               >
                 <IconExternalLink className="mr-2" />
                 {/* todo: implement deploy functionality */}

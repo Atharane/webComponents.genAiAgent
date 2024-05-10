@@ -5,6 +5,7 @@ const router = express.Router();
 
 
 router.post("/signup", authControllers.signup);
+router.post("/addWebsite", authControllers.addDomString);
 
 
 export default router;
