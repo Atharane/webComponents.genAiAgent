@@ -68,7 +68,7 @@ const ProtectedClient = () => {
           let a  = customAlphabet(
             '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
             7
-          ); 
+          );
 
           const linkKey = a();
 
