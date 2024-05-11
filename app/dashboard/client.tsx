@@ -5,7 +5,7 @@ import { useState, useTransition } from 'react'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import ComponentEditable from '@/components/decorators/componentEditable'
 import componentsStore from '@/lib/store'
-import { invokeToolsIncludedProvider } from '@/lib/query/actions'
+
 import {
   IconArrowRight,
   IconCopy,
@@ -15,19 +15,26 @@ import {
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-
-let config = {}
+import { RevisionPromptForm } from '@/components/revision-prompt-form'
+import Confetti from 'react-confetti'
+import { useAIState, useActions, useUIState } from 'ai/rsc'
 
 const ProtectedClient = () => {
+  const { invokeToolsIncludedProvider } = useActions()
+
   const [query, setQuery] = useState(
     'Create a homepage for my indie plant shop that highlights the incredible variety of plants I offer, brags about my top-notch customer service, and shows off those 100+ happy customers.'
   )
-  const [components, setComponents] = useState<any>([
-    componentsStore.BANNER,
-    componentsStore.HERO_WITH_IMAGE_AND_REVIEW,
-    componentsStore.PRIMARY_PRODUCT_FEATURE,
-    componentsStore.FOOTER
-  ])
+
+  const [revisionQuery, setRevisionQuery] = useState(
+    'Mention that we have flat 12% sale going on currently 🎉'
+  )
+
+  const [aiState] = useAIState()
+
+  const componentIDs = aiState.componentIDs as string[]
+  const components = componentIDs?.map(id => componentsStore[id])
+
   const [loading, startTransition] = useTransition()
 
   const initializeComponents = async () => {
@@ -38,23 +45,10 @@ const ProtectedClient = () => {
       )
     ]
 
-    const nComponents = [
-      componentsStore.BANNER,
-      componentsStore.HERO_WITH_IMAGE_AND_REVIEW,
-      componentsStore.PRIMARY_PRODUCT_FEATURE,
-      componentsStore.FOOTER
-    ]
-
     startTransition(async () => {
-      const microcopy = await invokeToolsIncludedProvider(
-        `The website content must be funny and sarcastic, the site is ${query}`
-      )
-      console.log('MICROCOPY: ', microcopy)
-      config = {
-        ...config,
-        ...microcopy
-      }
-      setComponents(nComponents)
+      const response = await invokeToolsIncludedProvider({
+        prompt: `The website content must be funny and sarcastic, the site is ${query}`
+      })
     })
   }
 
@@ -83,9 +77,9 @@ const ProtectedClient = () => {
         <div className="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative">
             <textarea
-              // todo: ad focus on load
-              rows={12}
-              className="p-4 pr-32 bg-white/60 block w-full border rounded-2xl border-gray-700 text-sm disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-mono"
+              // todo: add focus on load
+              rows={6}
+              className="p-4 pr-32 bg-white/60 block w-full border rounded-2xl border-gray-700  disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-serif text-lg"
               placeholder="ask me anything..."
               value={query}
               onKeyDown={e => {
@@ -123,8 +117,25 @@ const ProtectedClient = () => {
 
         {/* ----------------------- ✨ GENERATED_WEBSITE ----------------------- */}
 
-        {components.length > 0 && (
-          <div className="p-8 flex flex-col h-screen mt-24 z-10">
+        {aiState?.componentIDs?.length > 0 && (
+          <div className="p-8 flex flex-col h-screen mt-24 z-10 relative">
+            {/* <Confetti
+              style={{
+                zIndex: 1000
+              }}
+              recycle={false}
+              // drawShape={ctx => {
+              //   ctx.beginPath()
+              //   for (let i = 0; i < 22; i++) {
+              //     const angle = 0.35 * i
+              //     const x = (0.2 + 1.5 * angle) * Math.cos(angle)
+              //     const y = (0.2 + 1.5 * angle) * Math.sin(angle)
+              //     ctx.lineTo(x, y)
+              //   }
+              //   ctx.stroke()
+              //   ctx.closePath()
+              // }}
+            /> */}
             {/* ----------------------- 📦 MINI_BROSWER_WINDOW ----------------------- */}
             {/* <div className="overflow-y-scroll relative"> */}
             <div className="p-2 pl-4 bg-slate-200 rounded-t-md flex items-center sticky">
@@ -132,7 +143,7 @@ const ProtectedClient = () => {
               <div className="rounded-full size-4 bg-yellow-400 flex mr-2"></div>
               <div className="rounded-full size-4 bg-green-400 flex mr-2"></div>
               <div className="flex-auto p-2 pl-4 ml-2 mr-1 rounded-md bg-white/60 text-slate-600 text-xs font-mono">
-                https://atharane.vercel.app
+                https://lorem.vercel.app
               </div>
             </div>
             <div className="grow text-clip overflow-y-scroll border-4 border-slate-200 rounded-b-lg bg-white">
@@ -141,7 +152,9 @@ const ProtectedClient = () => {
                   return (
                     <ComponentEditable id={component.id} key={component.id}>
                       {/* @ts-ignore */}
-                      <component.component {...config?.[component.id]} />
+                      <component.component
+                        {...aiState.componentConfig?.[component.id]}
+                      />
                     </ComponentEditable>
                   )
                 })}
@@ -149,9 +162,12 @@ const ProtectedClient = () => {
             </div>
             {/* </div> */}
             {/* ----------------------- 🦄 FAB_STRIP ----------------------- */}
-            <div className="flex gap-2 p-2 mt-2 rounded-lg border-4 border-slate-200 bg-transparent">
+
+            <div className="flex gap-2 items-center p-2 mt-2 rounded-lg  bg-transparent">
+              {/* border-4 border-slate-200 */}
               <Button
                 onClick={() => {
+                  // todo: structure to include head, body, tags, ignore componentEditable wrraper and tailwindcss CDN
                   const generatedWebpage = document.getElementById('generation')
                     ?.innerHTML as string
                   const blob = new Blob([generatedWebpage], {
@@ -166,12 +182,14 @@ const ProtectedClient = () => {
                   toast.success('Copied to clipboard')
                 }}
                 size="lg"
+                variant="secondary"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
               >
                 <IconCopy className="mr-2" />
                 Download Code
               </Button>
               <Button
+                variant="secondary"
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
               >
@@ -180,11 +198,22 @@ const ProtectedClient = () => {
                 Get Sharable Link
               </Button>
               <Button
+                variant="secondary"
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
               >
-                lorem ispum dolor sit
+                lorem ispum
               </Button>
+              {/* <Input type="text"  className='w-full border py-[22px]' /> */}
+              <RevisionPromptForm
+                input={revisionQuery}
+                setInput={setRevisionQuery}
+              />
+              {/* <Button
+                    variant="secondary
+                  className="px-4 py-6 bg-blue-500">
+                <IconJarLogoIcon />
+              </Button> */}
             </div>
           </div>
         )}

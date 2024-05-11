@@ -35,6 +35,7 @@ import { saveChat } from '@/app/actions'
 import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat } from '@/lib/types'
 import { auth } from '@/auth'
+import { invokeToolsIncludedProvider } from '../query/actions'
 
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
@@ -405,7 +406,8 @@ export type UIState = {
 export const AI = createAI<AIState, UIState>({
   actions: {
     submitUserMessage,
-    confirmPurchase
+    confirmPurchase,
+    invokeToolsIncludedProvider
   },
   initialUIState: [],
   initialAIState: { chatId: nanoid(), messages: [] },

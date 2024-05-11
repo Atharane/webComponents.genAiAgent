@@ -75,7 +75,7 @@ const ComponentEditable = ({
   return (
     <div
       contentEditable={isEditing ? 'true' : 'inherit'}
-      className="relative group hover:z-10 hover:outline-dashed outline-2  outline-offset-2 outline-rose-400"
+      className="relative group hover:z-10 hover:bg-rose-600/20x"
     >
       <div className="">{children}</div>
 
