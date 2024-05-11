@@ -15,8 +15,40 @@ import {
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { nanoid } from 'nanoid'
 
 let config = {}
+
+const deployWebpage = async () => {
+  try {
+    const generatedWebpage = document.getElementById('generation')
+      ?.innerHTML as string
+
+    if (!generatedWebpage) return toast.error('No Webpage Generated')
+
+    const linkKey = nanoid(10)
+
+    const data = {
+      linkKey: linkKey,
+      username: 'Hem',
+      DOMString: generatedWebpage
+    }
+
+    const response = await fetch('http://localhost:8080/api/v1/addWebsite', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+
+    toast.success(
+      'Webpage live on https://genwebcomponents.vercel.app/${linkKey}'
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 const ProtectedClient = () => {
   const [query, setQuery] = useState(
@@ -174,6 +206,7 @@ const ProtectedClient = () => {
               <Button
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+                onClick={deployWebpage}
               >
                 <IconExternalLink className="mr-2" />
                 {/* todo: implement deploy functionality */}
