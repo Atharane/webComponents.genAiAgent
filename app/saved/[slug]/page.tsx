@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect , useState , useRef} from 'react'
- 
+
 const UniqueWebPage = (props:any)=> {
 
     const elementRef = useRef(null);
@@ -13,7 +13,7 @@ const UniqueWebPage = (props:any)=> {
             }
 
             // console.log(data , "this is a data");
-            
+
             const res = await fetch("http://localhost:5000/api/v1/getDOM",{
                 method: 'POST',
                 headers: {
@@ -21,7 +21,7 @@ const UniqueWebPage = (props:any)=> {
                 },
                 body: JSON.stringify(data)
             })
-            
+
             const apiRepsonse = await res.json();
                 // console.log("this is DOM RESPONSE", apiRepsonse.data);
                 // console.log(apiRepsonse.body,"lol");
@@ -36,11 +36,11 @@ const UniqueWebPage = (props:any)=> {
         const element = elementRef.current;
         // Remove hover styles
         element.style.pointerEvents = 'none';
-    
+
         // Remove hover event handlers
         element.onmouseover = null;
         element.onmouseout = null;
-    
+
         // Add any additional styles or event handlers you want
         element.style.cursor = 'default';
         getDOMString();
