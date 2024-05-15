@@ -1,9 +1,9 @@
 "use client"
-import React, { useEffect , useState} from 'react'
+import React, { useEffect , useState , useRef} from 'react'
  
 const UniqueWebPage = (props:any)=> {
 
-
+    const elementRef = useRef(null);
     const [dom,setDom] = useState<any>("");
     const getDOMString = async() =>{
         try {
@@ -33,13 +33,24 @@ const UniqueWebPage = (props:any)=> {
     }
 
     useEffect(()=>{
+        const element = elementRef.current;
+        // Remove hover styles
+        element.style.pointerEvents = 'none';
+    
+        // Remove hover event handlers
+        element.onmouseover = null;
+        element.onmouseout = null;
+    
+        // Add any additional styles or event handlers you want
+        element.style.cursor = 'default';
         getDOMString();
     },[])
 
     return (
         <>
-         <div dangerouslySetInnerHTML={{ __html: dom }} />
-        <h1>HI ALL, {props?.params?.slug}</h1>
+         <div
+         ref={elementRef}
+         dangerouslySetInnerHTML={{ __html: dom }} />
         </>
 
 
