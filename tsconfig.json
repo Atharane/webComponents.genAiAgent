@@ -30,6 +30,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/saved/[slug].js/[[...slug]].js"  ],
   "exclude": ["node_modules"]
 }
