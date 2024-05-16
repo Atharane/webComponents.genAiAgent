@@ -34,7 +34,7 @@ const deployWebpage = async () => {
       DOMString: generatedWebpage
     }
 
-    const response = await fetch('http://localhost:8080/api/v1/addWebsite', {
+    const response = await fetch('https://webcomponents-genaiagent-server.onrender.com/api/v1/addWebsite', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
