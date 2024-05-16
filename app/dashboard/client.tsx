@@ -116,8 +116,8 @@ const ProtectedClient = () => {
           <div className="relative">
             <textarea
               // todo: ad focus on load
-              rows={12}
-              className="p-4 pr-32 bg-white/60 block w-full border rounded-2xl border-gray-700 text-sm disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-mono"
+              rows={6}
+              className="p-4 pr-32 text-base bg-white/60 block w-full border rounded-2xl border-gray-700  disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-serif"
               placeholder="ask me anything..."
               value={query}
               onKeyDown={e => {
