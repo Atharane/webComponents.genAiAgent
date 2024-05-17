@@ -10,7 +10,7 @@ const componentsStore = {
   BANNER: {
     id: 'BANNER',
     schema: z.object({
-      brand: z.string().describe('suggest a brand name for the website'),
+      brand: z.string().describe('suggest the same brand name for the website'),
       anchorsString: z
         .string()
         .describe(

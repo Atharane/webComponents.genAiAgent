@@ -1,11 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import { HumanMessage, SystemMessage } from '@langchain/core/messages'
 import ComponentEditable from '@/components/decorators/componentEditable'
 import componentsStore from '@/lib/store'
-import { invokeToolsIncludedProvider } from '@/lib/query/actions'
+
+import Confetti from 'react-confetti'
+import { useAIState, useActions, useUIState } from 'ai/rsc'
+
 import {
   IconArrowRight,
   IconCopy,
@@ -18,9 +21,12 @@ import { toast } from 'sonner'
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/css";
 import { nanoid } from 'nanoid'
+
 import { GradientPicker } from '../../components/gradientPicker'
 
 let config = {}
+import { RevisionPromptForm } from '@/components/revision-prompt-form'
+
 
 const deployWebpage = async () => {
   try {
@@ -37,13 +43,16 @@ const deployWebpage = async () => {
       DOMString: generatedWebpage
     }
 
-    const response = await fetch('https://webcomponents-genaiagent-server.onrender.com/api/v1/addWebsite', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
+    const response = await fetch(
+      'https://webcomponents-genaiagent-server.onrender.com/api/v1/addWebsite',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }
+    )
 
     toast.success(
       'Webpage live on https://genwebcomponents.vercel.app/${linkKey}'
@@ -55,22 +64,31 @@ const deployWebpage = async () => {
 
 
 const ProtectedClient = () => {
+
   const [isColor , setIsColor] = useState(false);
   const [colorGradient, setColorGradient] = useColor("#561ecb");
   const [color,setColor] = useState<any>("white");
   const [textColor,setTextColor] = useState<any>("black");
 
 
+
+  const fabStripRef = useRef<HTMLDivElement>(null)
+
   const [query, setQuery] = useState(
     'Create a homepage for my indie plant shop that highlights the incredible variety of plants I offer, brags about my top-notch customer service, and shows off those 100+ happy customers.'
   )
-  const [components, setComponents] = useState<any>([
-    componentsStore.BANNER,
-    componentsStore.HERO_WITH_IMAGE_AND_REVIEW,
-    componentsStore.PRIMARY_PRODUCT_FEATURE,
-    componentsStore.FOOTER
-  ])
+  const [revisionQuery, setRevisionQuery] = useState(
+    'Mention that we have flat 12% sale going on currently 🎉'
+  )
+
+  const [aiState] = useAIState()
+
+  const componentIDs = aiState.componentIDs as string[]
+  const components = componentIDs?.map(id => componentsStore[id])
+
   const [loading, startTransition] = useTransition()
+  const { invokeToolsIncludedProvider } = useActions()
+    
 
   const initializeComponents = async () => {
     const messages = [
@@ -80,23 +98,15 @@ const ProtectedClient = () => {
       )
     ]
 
-    const nComponents = [
-      componentsStore.BANNER,
-      componentsStore.HERO_WITH_IMAGE_AND_REVIEW,
-      componentsStore.PRIMARY_PRODUCT_FEATURE,
-      componentsStore.FOOTER
-    ]
-
     startTransition(async () => {
-      const microcopy = await invokeToolsIncludedProvider(
-        `The website content must be funny and sarcastic, the site is ${query}`
-      )
-      console.log('MICROCOPY: ', microcopy)
-      config = {
-        ...config,
-        ...microcopy
-      }
-      setComponents(nComponents)
+      const response = await invokeToolsIncludedProvider({
+        prompt: `The website content must be funny and sarcastic, the site is ${query}`
+      })
+      //
+      fabStripRef.current?.scrollIntoView({
+        behavior: 'smooth'
+      })
+      console.log('~ startTransition ~ response:', response)
     })
   }
 
@@ -132,8 +142,8 @@ const ProtectedClient = () => {
           <div className="relative">
             <textarea
               // todo: ad focus on load
-              rows={12}
-              className="p-4 pr-32 bg-white/60 block w-full border rounded-2xl border-gray-700 text-sm disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-mono"
+              rows={6}
+              className="p-4 pr-32 text-lg bg-white/60 block w-full border rounded-2xl border-gray-700  disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 font-serif"
               placeholder="ask me anything..."
               value={query}
               onKeyDown={e => {
@@ -171,8 +181,25 @@ const ProtectedClient = () => {
 
         {/* ----------------------- ✨ GENERATED_WEBSITE ----------------------- */}
 
-        {components.length > 0 && (
+        {aiState?.componentIDs?.length > 0 && (
           <div className="p-8 flex flex-col h-screen mt-24 z-10">
+            <Confetti
+              style={{
+                zIndex: 1000
+              }}
+              recycle={false}
+              // drawShape={ctx => {
+              //   ctx.beginPath()
+              //   for (let i = 0; i < 22; i++) {
+              //     const angle = 0.35 * i
+              //     const x = (0.2 + 1.5 * angle) * Math.cos(angle)
+              //     const y = (0.2 + 1.5 * angle) * Math.sin(angle)
+              //     ctx.lineTo(x, y)
+              //   }
+              //   ctx.stroke()
+              //   ctx.closePath()
+              // }}
+            />
             {/* ----------------------- 📦 MINI_BROSWER_WINDOW ----------------------- */}
             {/* <div className="overflow-y-scroll relative"> */}
             <div className="p-2 pl-4 bg-slate-200 rounded-t-md flex items-center sticky">
@@ -180,7 +207,7 @@ const ProtectedClient = () => {
               <div className="rounded-full size-4 bg-yellow-400 flex mr-2"></div>
               <div className="rounded-full size-4 bg-green-400 flex mr-2"></div>
               <div className="flex-auto p-2 pl-4 ml-2 mr-1 rounded-md bg-white/60 text-slate-600 text-xs font-mono">
-                https://atharane.vercel.app
+                https://lorem.vercel.app
               </div>
             </div>
             <div className="grow text-clip overflow-y-scroll border-4 border-slate-200 rounded-b-lg bg-white">
@@ -188,8 +215,9 @@ const ProtectedClient = () => {
                 {[...components].map(component => {
                   return (
                     <ComponentEditable id={component.id} key={component.id}>
-                      {/* @ts-ignore */}
-                      <component.component {...config?.[component.id]} />
+                      <component.component
+                        {...aiState.componentConfig?.[component.id]}
+                      />
                     </ComponentEditable>
                   )
                 })}
@@ -197,7 +225,10 @@ const ProtectedClient = () => {
             </div>
             {/* </div> */}
             {/* ----------------------- 🦄 FAB_STRIP ----------------------- */}
-            <div className="flex gap-2 p-2 mt-2 rounded-lg border-4 border-slate-200 bg-transparent">
+            <div
+              ref={fabStripRef}
+              className="flex gap-2 p-2 mt-2 rounded-lg border-4 border-slate-200 bg-transparent"
+            >
               <Button
                 onClick={() => {
                   const generatedWebpage = document.getElementById('generation')
@@ -242,7 +273,11 @@ const ProtectedClient = () => {
               >
                 Background Color
               </Button>
-        
+
+              <RevisionPromptForm
+                input={revisionQuery}
+                setInput={setRevisionQuery}
+              />
 
             </div>
 
