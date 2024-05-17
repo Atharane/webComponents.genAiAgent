@@ -26,7 +26,8 @@ export const invokeToolsIncludedProvider = async (
       BANNER: store.BANNER.schema,
       FOOTER: store.FOOTER.schema,
       HERO_WITH_IMAGE_AND_REVIEW: store.HERO_WITH_IMAGE_AND_REVIEW.schema,
-      PRIMARY_PRODUCT_FEATURE: store.PRIMARY_PRODUCT_FEATURE.schema
+      PRIMARY_PRODUCT_FEATURE: store.PRIMARY_PRODUCT_FEATURE.schema,
+      SECONDARY_DESCRIPTION: store.SECONDARY_DESCRIPTION.schema
     })
 
   const webpageMicropyTool = new DynamicStructuredTool({

@@ -15,7 +15,10 @@ import {
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { ColorPicker, useColor } from "react-color-palette";
+import "react-color-palette/css";
 import { nanoid } from 'nanoid'
+import { GradientPicker } from '../../components/gradientPicker'
 
 let config = {}
 
@@ -50,7 +53,14 @@ const deployWebpage = async () => {
   }
 }
 
+
 const ProtectedClient = () => {
+  const [isColor , setIsColor] = useState(false);
+  const [colorGradient, setColorGradient] = useColor("#561ecb");
+  const [color,setColor] = useState<any>("white");
+  const [textColor,setTextColor] = useState<any>("black");
+
+
   const [query, setQuery] = useState(
     'Create a homepage for my indie plant shop that highlights the incredible variety of plants I offer, brags about my top-notch customer service, and shows off those 100+ happy customers.'
   )
@@ -88,6 +98,12 @@ const ProtectedClient = () => {
       }
       setComponents(nComponents)
     })
+  }
+
+  const getColors = ()=>{
+    setIsColor(false);
+    console.log("this is colorGradient" , colorGradient);
+    setColor(colorGradient.hex)
   }
 
   return (
@@ -168,7 +184,7 @@ const ProtectedClient = () => {
               </div>
             </div>
             <div className="grow text-clip overflow-y-scroll border-4 border-slate-200 rounded-b-lg bg-white">
-              <div id="generation">
+              <div id="generation" style={{backgroundColor: color , color : textColor}}>
                 {[...components].map(component => {
                   return (
                     <ComponentEditable id={component.id} key={component.id}>
@@ -216,9 +232,27 @@ const ProtectedClient = () => {
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
               >
-                lorem ispum dolor sit
+                Text
               </Button>
+
+               <Button
+                size="lg"
+                className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
+                onClick={()=>setIsColor(true)}
+              >
+                Background Color
+              </Button>
+        
+
             </div>
+
+            <div>
+            {
+               isColor ? <div><ColorPicker color={colorGradient} onChange={setColorGradient} />
+               <Button onClick={()=>getColors()}>OK</Button>
+               </div> : null
+            }
+              </div>  
           </div>
         )}
       </div>
