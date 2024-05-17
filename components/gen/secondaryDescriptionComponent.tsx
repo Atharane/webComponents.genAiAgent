@@ -62,15 +62,15 @@ const secondaryDescriptionComponent = () => {
                   <em>"{componentMetadata?.header?.description}"</em>
                 </p>
               </div>
-  
+
               <div className="p-4 rounded-b-xl md:px-6">
                 <h3 className="text-sm font-semibold text-gray-800 sm:text-base dark:text-gray-200">
                   {componentMetadata?.subheader?.description}
                 </h3>
               </div>
             </div>
-  
-           
+
+
           </div>
         </div>
       </>

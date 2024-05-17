@@ -242,7 +242,7 @@ const ProtectedClient = () => {
               >
                 Background Color
               </Button>
-        
+
 
             </div>
 
@@ -252,7 +252,7 @@ const ProtectedClient = () => {
                <Button onClick={()=>getColors()}>OK</Button>
                </div> : null
             }
-              </div>  
+              </div>
           </div>
         )}
       </div>
