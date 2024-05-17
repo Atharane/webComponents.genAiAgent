@@ -4,6 +4,7 @@ import PrimaryBanner from '@/components/gen/banner'
 import PrimaryFooter from '@/components/gen/footer'
 import HeroWithImageAndReview from '@/components/gen/heroWithImageAndReview'
 import PrimaryProductFeature from '@/components/gen/primaryProductFeature'
+import SecondaryDescriptionComponent from '../components/gen/secondaryDescriptionComponent'
 
 const componentsStore = {
   BANNER: {
@@ -91,7 +92,24 @@ const componentsStore = {
         value: z.string().describe('The value of the sixth stat')
       })
     })
-  }
+  },
+
+
+  SECONDARY_DESCRIPTION: {
+    id: 'SECONDARY_DESCRIPTION',
+    component: SecondaryDescriptionComponent,
+    schema: z.object({
+      header: z
+        .string()
+        .describe('The description of the secondary component section approximately 15-20 words'),
+      subheader: z
+        .string()
+        .describe(
+          'The sub description of the secondary component section approximately 10-12 words'
+        ),
+    })
+  },
+
 }
 
 export default componentsStore
