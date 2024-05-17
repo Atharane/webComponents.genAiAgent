@@ -1,9 +1,14 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { invokeToolsIncludedProvider } from '@/lib/query/actions'
 import { Button } from '@/components/ui/button'
-import { IconPencilEdit, IconClick } from '@/components/ui/icons'
+import {
+  IconPencilEdit,
+  IconClick,
+  IconSeparator,
+  IconFloppyDisk
+} from '@/components/ui/icons'
+import { useAIState, useActions, useUIState } from 'ai/rsc'
 
 const EditFABStrip = ({ toggleEditMode }: { toggleEditMode: () => void }) => {
   return (
@@ -68,6 +73,8 @@ const ComponentEditable = ({
   const [isEditing, setIsEditing] = useState(false)
   const [prompt, setPrompt] = useState('')
 
+  const { invokeToolsIncludedProvider } = useActions()
+
   const toggleEditMode = () => {
     setIsEditing(previous => !previous)
   }
@@ -75,18 +82,19 @@ const ComponentEditable = ({
   return (
     <div
       contentEditable={isEditing ? 'true' : 'inherit'}
-      className="relative group hover:z-10 hover:outline-dashed outline-2  outline-offset-2 outline-rose-400"
+      className="relative group hover:z-10 outline-2  outline-offset-2 outline-rose-400 hover:bg-rose-600/20x"
     >
       <div className="">{children}</div>
 
       {isEditing ? (
         <div className="save-btn z-10 invisible group-hover:visible absolute left-1/2 -bottom-10  -translate-x-1/2 -translate-y-1/2">
           <Button
-            className=" text-white font-bold rounded-lg  bg-emerald-400"
+            className=" text-white font-bold rounded-lg gap-2  bg-emerald-400 hover:bg-emerald-500"
             onClick={() => {
               setIsEditing(false)
             }}
           >
+            <IconFloppyDisk />
             Save Changes
           </Button>
         </div>
@@ -129,7 +137,11 @@ const ComponentEditable = ({
             <div className="flex h-full items-center gap-2 border-l border-gray-700 pl-2">
               <button
                 onClick={() => {
-                  invokeToolsIncludedProvider(prompt, [id])
+                  invokeToolsIncludedProvider({
+                    revision: true,
+                    prompt,
+                    targetComponentIDs: [id]
+                  })
                 }}
                 className="flex size-8 shrink-0 items-center justify-center self-center rounded-full border text-gray-300 outline-none ring-offset-1 ring-offset-gray-900 transition-colors hover:text-gray-50 focus-visible:ring-1 focus-visible:ring-gray-300 disabled:opacity-50 border-gray-600 hover:bg-gray-800"
               >
