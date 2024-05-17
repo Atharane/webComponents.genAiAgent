@@ -11,7 +11,7 @@ const fallback = {
   },
 };
 
-const secondaryDescriptionComponent = () => {
+const SecondaryDescriptionComponent = () => {
     const [componentMetadata, setComponentMetadata] = useState<any>(fallback);
 
     if (!componentMetadata) {
@@ -53,7 +53,7 @@ const secondaryDescriptionComponent = () => {
     }
     return (
       <>
-        <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+        {/* <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
             <div className="flex flex-col bg-white border border-gray-200 shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-700">
@@ -69,12 +69,27 @@ const secondaryDescriptionComponent = () => {
                 </h3>
               </div>
             </div>
+
+            
   
            
           </div>
-        </div>
+        </div> */}
+
+        <div class="bg-neutral-900">
+  <div class="max-w-5xl mx-auto px-4 xl:px-0 pt-24 lg:pt-32 pb-24">
+    <h1 class="font-semibold text-white text-5xl md:text-6xl">
+    {componentMetadata?.header?.description}
+    </h1>
+    <div class="max-w-4xl">
+      <p class="mt-5 text-neutral-400 text-lg">
+      {componentMetadata?.subheader?.description}
+      </p>
+    </div>
+  </div>
+</div>
       </>
     );
 }
 
-export default secondaryDescriptionComponent
+export default SecondaryDescriptionComponent

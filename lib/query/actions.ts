@@ -2,7 +2,6 @@
 
 import { ChatOpenAI } from '@langchain/openai'
 import { DynamicStructuredTool } from '@langchain/core/tools'
-
 import { createAI, getMutableAIState, getAIState } from 'ai/rsc'
 import { nanoid } from 'nanoid'
 import { getUIStateFromAIState } from '../chat/actions'
@@ -18,7 +17,6 @@ const openAIProvider = new ChatOpenAI({
 
 const deicideComponents = async (prompt: string) => {
   const componentIDs = [] as string[]
-
   for (const property in store) {
     // @ts-ignore-next-line
     componentIDs.push(store[property].id)
@@ -197,6 +195,19 @@ export const invokeToolsIncludedProvider = async (config: any) => {
   }
 
   const componentIDs = await deicideComponents(config?.prompt)
+
+  aiState.done({
+    ...aiState.get(),
+    prompt: config?.prompt,
+    componentIDs,
+    componentConfig: {
+      // ...aiState.get().componentConfig,
+      // ...microcopy
+    }
+  })
+
+  return;
+
   const webpageSchema = z.object({
     GLOBAL: z.object({
       brand: z
