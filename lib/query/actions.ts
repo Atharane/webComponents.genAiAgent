@@ -20,6 +20,7 @@ const deicideComponents = async (prompt: string) => {
   const componentIDs = [] as string[]
 
   for (const property in store) {
+    // @ts-ignore-next-line
     componentIDs.push(store[property].id)
   }
 
@@ -29,7 +30,7 @@ const deicideComponents = async (prompt: string) => {
 
   const fnCallSchema = z.object({
     // componentIDs: z.enum(componentIDs)
-    componentIDs: z.string()
+    componentIDs: z.string().describe(cstmStr)
   })
 
   const webpageMicropyTool = new DynamicStructuredTool({
@@ -49,7 +50,44 @@ const deicideComponents = async (prompt: string) => {
 
   const validComponentIDs = microcopy?.componentIDs
     ?.split(' ')
+    // @ts-ignore-next-line
     .filter(id => componentIDs.includes(id))
+  console.log('🚀 ~ deicideComponents ~ validComponentIDs:', validComponentIDs)
+  return validComponentIDs
+}
+
+const deicideComponentsToBeChanged = async (
+  prompt: string,
+  oldComponentIDs: string[]
+) => {
+  const cstmStr = `We have a prebuilt site that has the following components, ${oldComponentIDs.join(
+    ', '
+  )}. Now the user has some changes in mind, based on the user's need Decide which component need to be changed, and return the component ids, the ids must be one of the available components in the store, The available components are ${oldComponentIDs.join(', ')}`
+
+  const fnCallSchema = z.object({
+    // componentIDs: z.enum(componentIDs)
+    componentIDs: z.string().describe(cstmStr)
+  })
+
+  const webpageMicropyTool = new DynamicStructuredTool({
+    name: 'component_decider',
+    description: `Decide which component need to be modified based on the prompt, and return the component ids space separated, the ids must be one of the available components in the store, nothing else. The available components are ${oldComponentIDs.join(', ')}`,
+    schema: fnCallSchema,
+    // @ts-ignore-next-line
+    func: async args => {}
+  })
+
+  const llmWithTools = openAIProvider.bindTools([webpageMicropyTool])
+
+  const response = await llmWithTools.invoke(prompt)
+
+  const microcopy = response?.tool_calls?.[0]?.args
+  console.log('🚀 ~ deicideComponents ~ array:', microcopy)
+
+  const validComponentIDs = microcopy?.componentIDs
+    ?.split(' ')
+    // @ts-ignore-next-line
+    .filter(id => oldComponentIDs.includes(id))
   console.log('🚀 ~ deicideComponents ~ validComponentIDs:', validComponentIDs)
   return validComponentIDs
 }
@@ -58,19 +96,24 @@ export const invokeToolsIncludedProvider = async (config: any) => {
   'use server'
 
   const aiState = getMutableAIState<typeof AI>()
+  const readableAIState = aiState.get()
 
-  if (config.revision) {
-    const componentIDs = config?.targetComponentIDs
-    console.log(
-      '🚀 ~ invokeToolsIncludedProvider ~ componentIDs:',
-      componentIDs
+  if (config?.aiAgent) {
+    console.log('AI PROMPT', config?.prompt)
+
+    const componentIDs = await deicideComponentsToBeChanged(
+      config?.prompt,
+      readableAIState.componentIDs
     )
+
 
     const targetScehma = {}
 
     // add the schema for the components, who's .id is in the componentIDs array
     for (const property in store) {
+      // @ts-ignore-next-line
       if (componentIDs?.includes(store[property]?.id)) {
+        // @ts-ignore-next-line
         targetScehma[property] = store[property].schema
         console.log('🚀 ~ invokeToolsIncludedProvider ~ property:', property)
       }
@@ -89,7 +132,54 @@ export const invokeToolsIncludedProvider = async (config: any) => {
 
     const llmWithTools = openAIProvider.bindTools([webpageMicropyTool])
 
-    const response = await llmWithTools.invoke(config?.prompt)
+    const response = await llmWithTools.invoke(readableAIState.prompt + ' ' + config?.prompt)
+
+    const microcopy = response?.tool_calls?.[0]?.args
+    console.log(JSON.stringify(response.tool_calls, null, 2))
+
+    aiState.done({
+      ...aiState.get(),
+      componentIDs,
+      componentConfig: {
+        ...aiState.get().componentConfig,
+        ...microcopy
+      }
+    })
+
+
+    return microcopy
+  }
+
+  if (config.revision) {
+    const componentIDs = config?.targetComponentIDs
+
+    const targetScehma = {}
+
+    // add the schema for the components, who's .id is in the componentIDs array
+    for (const property in store) {
+      // @ts-ignore-next-line
+      if (componentIDs?.includes(store[property]?.id)) {
+        // @ts-ignore-next-line
+        targetScehma[property] = store[property].schema
+        console.log('🚀 ~ invokeToolsIncludedProvider ~ property:', property)
+      }
+    }
+
+    const webpageSchema = z.object(targetScehma)
+
+    const webpageMicropyTool = new DynamicStructuredTool({
+      name: 'website_templater',
+      description:
+        'Give me the appropriate micropcopy and content for a website that I am developing.',
+      schema: webpageSchema,
+      // @ts-ignore-next-line
+      func: async args => {}
+    })
+
+    const llmWithTools = openAIProvider.bindTools([webpageMicropyTool])
+
+    console.log("🚀 ~ invokeToolsIncludedProvider ~ readableAIState.prompt + ' ' + config?.prompt:", readableAIState.prompt + ' ' + config?.prompt)
+    const response = await llmWithTools.invoke(readableAIState.prompt + ' ' + config?.prompt)
 
     const microcopy = response?.tool_calls?.[0]?.args
     console.log(JSON.stringify(response.tool_calls, null, 2))
@@ -137,6 +227,7 @@ export const invokeToolsIncludedProvider = async (config: any) => {
 
   aiState.done({
     ...aiState.get(),
+    prompt: config?.prompt,
     componentIDs,
     componentConfig: {
       ...aiState.get().componentConfig,
@@ -150,6 +241,7 @@ export const invokeToolsIncludedProvider = async (config: any) => {
 export type AIState = {
   generationID: string
   components: any
+  prompt: string
   componentIDs: Array<string>
   componentConfig: Record<string, any>
 }
@@ -165,6 +257,7 @@ export const AI = createAI<AIState, UIState>({
   },
   initialUIState: [],
   initialAIState: {
+    prompt: '',
     generationID: nanoid(),
     components: [],
     componentIDs: [],

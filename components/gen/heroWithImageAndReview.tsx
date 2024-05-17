@@ -1,16 +1,18 @@
 const fallback = {
-  header: "Betcha can’t eat just one!",
+  header: 'Betcha can’t eat just one!',
   subheader:
-    "Hand-picked professionals and expertly crafted components, designed for any kind of entrepreneur.",
-  primaryCTA: "Get started",
-  secondaryCTA: "Contact sales team",
-};
+    'Hand-picked professionals and expertly crafted components, designed for any kind of entrepreneur.',
+  primaryCTA: 'Get started',
+  secondaryCTA: 'Contact sales team',
+  heroImageUrl:
+    'https://images.unsplash.com/photo-1597773150796-e5c14ebecbf5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YWJzdHJhY3QlMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww'
+}
 
 const HeroWithImageAndReview = (props: typeof fallback) => {
   const config = {
     ...fallback,
-    ...props,
-  };
+    ...props
+  }
 
   return (
     <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
@@ -126,7 +128,7 @@ const HeroWithImageAndReview = (props: typeof fallback) => {
                 <span className="font-bold">4.6</span> /5 - from 12k reviews
               </p>
 
-              <div className="mt-5">
+              <div className="mt-5 flex gap-1 items-center">
                 <svg
                   className="h-auto w-16 text-gray-800 dark:text-white"
                   width="80"
@@ -160,10 +162,11 @@ const HeroWithImageAndReview = (props: typeof fallback) => {
                     fill="currentColor"
                   />
                 </svg>
-              </div>
+                <span className="text-xs">reviews</span>
+              </div> 
             </div>
 
-            <div className="py-5">
+            {/* <div className="py-5">
               <div className="flex space-x-1">
                 <svg
                   className="size-4 text-gray-800 dark:text-neutral-200"
@@ -259,14 +262,18 @@ const HeroWithImageAndReview = (props: typeof fallback) => {
                   />
                 </svg>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
         <div className="relative ms-4">
           <img
             className="w-full rounded-md mt-6"
-            src="https://images.unsplash.com/photo-1565299543923-37dd37887442?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHBhbmNha2VzfGVufDB8fDB8fHww&w=700&h=800&q=80"
+            src={
+              props.heroImageUrl
+                ? `https://image.pollinations.ai/prompt/${props.heroImageUrl}?width=1080&height=1420&nologo=true`
+                : config.heroImageUrl
+            }
             alt="Image Description"
           />
           <div className="absolute inset-0 -z-[1] bg-gradient-to-tr from-gray-200 via-white/0 to-white/0 size-full rounded-md mt-4 -mb-4 me-4 -ms-4 lg:mt-6 lg:-mb-6 lg:me-6 lg:-ms-6 dark:from-neutral-800 dark:via-neutral-900/0 dark:to-neutral-900/0"></div>
@@ -362,7 +369,7 @@ const HeroWithImageAndReview = (props: typeof fallback) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default HeroWithImageAndReview;
+export default HeroWithImageAndReview

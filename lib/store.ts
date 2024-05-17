@@ -57,6 +57,11 @@ const componentsStore = {
         .string()
         .describe(
           'The secondary call to action of the hero section approximately 1-4 words'
+        ),
+      heroImageUrl: z
+        .string()
+        .describe(
+          'suggest a description for the hero image, make it descriptive and detailed 6 - 12 words'
         )
     })
   },

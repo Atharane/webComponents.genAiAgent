@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Textarea from 'react-textarea-autosize'
 
-import { useActions, useUIState } from 'ai/rsc'
+import { useActions, useUIState, useAIState } from 'ai/rsc'
 
 import { UserMessage } from './stocks/message'
 import { type AI } from '@/lib/chat/actions'
@@ -18,6 +18,7 @@ import { useEnterSubmit } from '@/lib/hooks/use-enter-submit'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 
+
 export function RevisionPromptForm({
   input,
   setInput
@@ -25,6 +26,7 @@ export function RevisionPromptForm({
   input: string
   setInput: (value: string) => void
 }) {
+
   const router = useRouter()
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -63,7 +65,10 @@ export function RevisionPromptForm({
         ])
 
         // submit and get response message
-        const responseMessage = await invokeToolsIncludedProvider(true)
+        const responseMessage = await invokeToolsIncludedProvider({
+          aiAgent: true, 
+          prompt: value,
+        })
         setMessages(currentMessages => [...currentMessages, responseMessage])
       }}
     >
