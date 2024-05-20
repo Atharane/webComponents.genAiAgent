@@ -106,7 +106,6 @@ export const invokeToolsIncludedProvider = async (config: any) => {
       readableAIState.componentIDs
     )
 
-
     const targetScehma = {}
 
     // add the schema for the components, who's .id is in the componentIDs array
@@ -139,7 +138,6 @@ export const invokeToolsIncludedProvider = async (config: any) => {
 
     aiState.done({
       ...aiState.get(),
-      componentIDs,
       componentConfig: {
         ...aiState.get().componentConfig,
         ...microcopy
@@ -186,7 +184,6 @@ export const invokeToolsIncludedProvider = async (config: any) => {
 
     aiState.done({
       ...aiState.get(),
-      componentIDs,
       componentConfig: {
         ...aiState.get().componentConfig,
         ...microcopy
@@ -197,17 +194,28 @@ export const invokeToolsIncludedProvider = async (config: any) => {
   }
 
   const componentIDs = await deicideComponents(config?.prompt)
-  const webpageSchema = z.object({
+
+
+  const targetScehma = {
     GLOBAL: z.object({
       brand: z
         .string()
         .describe('suggest a attractive brand name for the brand')
     }),
-    BANNER: store.BANNER.schema,
-    FOOTER: store.FOOTER.schema,
-    HERO_WITH_IMAGE_AND_REVIEW: store.HERO_WITH_IMAGE_AND_REVIEW.schema,
-    PRIMARY_PRODUCT_FEATURE: store.PRIMARY_PRODUCT_FEATURE.schema
-  })
+  }
+
+  // add the schema for the components, who's .id is in the componentIDs array
+  for (const property in store) {
+    // @ts-ignore-next-line
+    if (componentIDs?.includes(store[property]?.id)) {
+      // @ts-ignore-next-line
+      targetScehma[property] = store[property].schema
+      console.log('🚀 ~ invokeToolsIncludedProvider ~ property:', property)
+    }
+  }
+
+  const webpageSchema = z.object(targetScehma)
+
 
   const webpageMicropyTool = new DynamicStructuredTool({
     name: 'website_templater',

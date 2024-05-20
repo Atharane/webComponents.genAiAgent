@@ -18,15 +18,14 @@ import {
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { ColorPicker, useColor } from "react-color-palette";
-import "react-color-palette/css";
+import { ColorPicker, useColor } from 'react-color-palette'
+import 'react-color-palette/css'
 import { nanoid } from 'nanoid'
 
 import { GradientPicker } from '../../components/gradientPicker'
 
 let config = {}
 import { RevisionPromptForm } from '@/components/revision-prompt-form'
-
 
 const deployWebpage = async () => {
   try {
@@ -55,7 +54,11 @@ const deployWebpage = async () => {
     )
 
     toast.success(
-      'Webpage live on https://genwebcomponents.vercel.app/${linkKey}'
+      `Webpage live on https://genwebcomponents.vercel.app/${linkKey}`
+    )
+
+    navigator.clipboard.writeText(
+      `${window.location.origin}/saved/${linkKey}`
     )
   } catch (error) {
     console.log(error)
@@ -174,13 +177,10 @@ const LoadingState = () => {
 }
 
 const ProtectedClient = () => {
-
-  const [isColor , setIsColor] = useState(false);
-  const [colorGradient, setColorGradient] = useColor("#561ecb");
-  const [color,setColor] = useState<any>("white");
-  const [textColor,setTextColor] = useState<any>("black");
-
-
+  const [isColor, setIsColor] = useState(false)
+  const [colorGradient, setColorGradient] = useColor('#561ecb')
+  const [color, setColor] = useState<any>('white')
+  const [textColor, setTextColor] = useState<any>('black')
 
   const fabStripRef = useRef<HTMLDivElement>(null)
 
@@ -207,7 +207,7 @@ const ProtectedClient = () => {
       )
     ]
 
-    fabStripRef.current?.scrollIntoView({
+    fabStripRef?.current?.scrollIntoView({
       behavior: 'smooth'
     })
 
@@ -220,9 +220,9 @@ const ProtectedClient = () => {
     })
   }
 
-  const getColors = ()=>{
-    setIsColor(false);
-    console.log("this is colorGradient" , colorGradient);
+  const getColors = () => {
+    setIsColor(false)
+    console.log('this is colorGradient', colorGradient)
     setColor(colorGradient.hex)
   }
 
@@ -294,7 +294,7 @@ const ProtectedClient = () => {
         {loading && <LoadingState />}
 
         {aiState?.componentIDs?.length > 0 && (
-          <div className="p-8 flex flex-col h-screen mt-24 z-10">
+          <div className="p-8 flex flex-col h-screen mt-32 z-10">
             <Confetti
               style={{
                 zIndex: 1000
@@ -323,7 +323,10 @@ const ProtectedClient = () => {
               </div>
             </div>
             <div className="grow text-clip overflow-y-scroll border-4 border-slate-200 rounded-b-lg bg-white">
-              <div id="generation" style={{backgroundColor: color , color : textColor}}>
+              <div
+                id="generation"
+                style={{ backgroundColor: color, color: textColor }}
+              >
                 {[...components].map(component => {
                   return (
                     <ComponentEditable id={component.id} key={component.id}>
@@ -375,10 +378,10 @@ const ProtectedClient = () => {
                 Text
               </Button>
 
-               <Button
+              <Button
                 size="lg"
                 className="rounded-sm px-12 py-6 flex items-center justify-center  font-semibold"
-                onClick={()=>setIsColor(true)}
+                onClick={() => setIsColor(true)}
               >
                 Background Color
               </Button>
@@ -387,21 +390,23 @@ const ProtectedClient = () => {
                 input={revisionQuery}
                 setInput={setRevisionQuery}
               />
-
             </div>
 
             <div>
-            {
-               isColor ? <div><ColorPicker color={colorGradient} onChange={setColorGradient} />
-               <Button onClick={()=>getColors()}>OK</Button>
-               </div> : null
-            }
-              </div>  
+              {isColor ? (
+                <div>
+                  <ColorPicker
+                    color={colorGradient}
+                    onChange={setColorGradient}
+                  />
+                  <Button onClick={() => getColors()}>OK</Button>
+                </div>
+              ) : null}
+            </div>
           </div>
         )}
-
-        <footer ref={fabStripRef}></footer>
       </div>
+      <footer ref={fabStripRef}></footer>
     </div>
   )
 }

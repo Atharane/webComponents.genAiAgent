@@ -8,6 +8,7 @@ import SecondaryDescriptionComponent from '../components/gen/secondaryDescriptio
 
 const componentsStore = {
   BANNER: {
+    rank: 1,
     id: 'BANNER',
     schema: z.object({
       brand: z.string().describe('suggest the same brand name for the website'),
@@ -20,6 +21,7 @@ const componentsStore = {
     component: PrimaryBanner
   },
   FOOTER: {
+    rank: 100,
     id: 'FOOTER',
     component: PrimaryFooter,
     schema: z.object({
@@ -38,6 +40,7 @@ const componentsStore = {
     })
   },
   HERO_WITH_IMAGE_AND_REVIEW: {
+    rank: 10,
     id: 'HERO_WITH_IMAGE_AND_REVIEW',
     component: HeroWithImageAndReview,
     schema: z.object({
@@ -67,6 +70,7 @@ const componentsStore = {
     })
   },
   PRIMARY_PRODUCT_FEATURE: {
+    rank: 50,
     id: 'PRIMARY_PRODUCT_FEATURE',
     component: PrimaryProductFeature,
     schema: z.object({
@@ -74,47 +78,78 @@ const componentsStore = {
       subheading: z.string().describe('The subheading of the product feature'),
       statsOne: z.object({
         title: z.string().describe('The title of the first stat'),
-        value: z.string().describe('The value of the first stat')
+        value: z.string().describe('The value of the first stat'),
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the first image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       }),
       statsTwo: z.object({
         title: z.string().describe('The title of the second stat'),
-        value: z.string().describe('The value of the second stat')
+        value: z.string().describe('The value of the second stat'),
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the second image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       }),
       statsThree: z.object({
         title: z.string().describe('The title of the third stat'),
-        value: z.string().describe('The value of the third stat')
+        value: z.string().describe('The value of the third stat'),
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the third image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       }),
       statsFour: z.object({
         title: z.string().describe('The title of the fourth stat'),
-        value: z.string().describe('The value of the fourth stat')
+        value: z.string().describe('The value of the fourth stat'),
+
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the fourth image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       }),
       statsFive: z.object({
         title: z.string().describe('The title of the fifth stat'),
-        value: z.string().describe('The value of the fifth stat')
+        value: z.string().describe('The value of the fifth stat'),
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the fifth image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       }),
       statsSix: z.object({
         title: z.string().describe('The title of the sixth stat'),
-        value: z.string().describe('The value of the sixth stat')
+        value: z.string().describe('The value of the sixth stat'),
+        imageUrl: z
+          .string()
+          .describe(
+            'suggest a description for the sixth image accordingly, make it descriptive and detailed 6 - 12 words'
+          )
       })
     })
   },
-
-
   SECONDARY_DESCRIPTION: {
+    rank: 70,
     id: 'SECONDARY_DESCRIPTION',
     component: SecondaryDescriptionComponent,
     schema: z.object({
       header: z
         .string()
-        .describe('The description of the secondary component section approximately 15-20 words'),
+        .describe(
+          'The description of the secondary component section approximately 15-20 words'
+        ),
       subheader: z
         .string()
         .describe(
           'The sub description of the secondary component section approximately 10-12 words'
-        ),
+        )
     })
-  },
-
+  }
 }
 
 export default componentsStore
